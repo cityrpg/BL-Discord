@@ -1,0 +1,3 @@
+Title: Discord Bridge
+Author: The CityRPG 4 Team
+Connects a Blockland server to Discord

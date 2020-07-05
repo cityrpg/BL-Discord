@@ -1,0 +1,20 @@
+{
+  "name": "blockland-discord-bridge",
+  "version": "0.1.0",
+  "description": "Connects a Blockland server to Discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "The CityRPG 4 Team",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "scripts": {
+    "test": "node ./bin/bl-discord.js"
+  }
+}
