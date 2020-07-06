@@ -29,7 +29,7 @@ function DiscordLinkServer::onConnectRequest(%server, %ip, %id) {
   }
 
   DiscordLinkServer.connection = %socket;
-  DiscordLinkServer.connection.send("{ \"type\": \"Handshake\"};\n");
+  DiscordLinkServer.connection.send("{ \"type\": \"Handshake\"}\n");
 }
 
 
