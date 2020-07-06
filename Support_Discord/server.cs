@@ -1,8 +1,10 @@
 function initDiscordLink() {
-  if(isObject(DiscordLinkServer)) {
+  if(isObject(DiscordLinkServer) && isObject(DiscordLinkServer.connection)) {
     DiscordLinkServer.connection.disconnect();
     DiscordLinkServer.connection.delete();
+  }
 
+  if(isObject(DiscordLinkServer)) {
     DiscordLinkServer.disconnect();
     DiscordLinkServer.delete();
   }
