@@ -1,6 +1,6 @@
 package DiscordLink {
 
-  function serverCmdMessageSent ( %client, %text ) {
+  function serverCmdMessageSent(%client, %text) {
     %chatData = JettisonObject();
     %chatData.set("type", "string", "Chat");
     %chatData.set("senderName", "string", %client.name);
@@ -8,7 +8,7 @@ package DiscordLink {
 
     DiscordLinkServer.transmit(jettisonStringify("object", %chatData));
 
-    Parent::chatMessageAll(%sender, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10);
+    Parent::serverCmdMessageSent(%client, %text);
   }
 };
 
