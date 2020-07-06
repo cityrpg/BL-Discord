@@ -8,17 +8,48 @@ process.title = `Blockland-Discord`;
 var pkg = require("../package.json");
 console.log("BL-Discord " + pkg.version);
 
-var socket;
+function parseGameInput(data) {
+  switch(data.type) {
+    case "Handshake":
+      console.log("Successfully connected to Blockland");
+      break;
+    case "Chat":
+      console.log("[Game chat] " + data.senderName + ": " + data.text);
+      break;
+  }
+}
 
 const client = net.createConnection({ port: 25625 }, () => {
-  console.log("Connecting to Blockland");
+  console.log("Connecting to Blockland...");
 
   client.write("Init\r\n");
 });
 
 client.on("data", (buffer) => {
-  console.log(buffer);
-  console.log(buffer.toString());
+  if(!buffer.toString().endsWith("\n")) {
+    warn("WARNING: Received potentially incomplete data from Blockland.");
+  }
+
+  var strings = buffer.toString().split("\n");
+
+  var data;
+  for(var i in strings) {
+    // Blank line ending indicates the end of the data -- ignore it.
+    if(strings[i] == "") {
+      return;
+    }
+
+    try {
+      data = JSON.parse(strings[i]);
+    }
+    catch(err) {
+      console.warn("Invalid input from Blockland (" + err.message + ")");
+      console.warn(strings[i]);
+      return;
+    }
+
+    parseGameInput(data);
+  }
 });
 
 client.on("end", () => {

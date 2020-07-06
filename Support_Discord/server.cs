@@ -1,3 +1,6 @@
+exec("./jettison.cs");
+exec("./package.cs");
+
 function initDiscordLink() {
   if(isObject(DiscordLinkServer) && isObject(DiscordLinkServer.connection)) {
     DiscordLinkServer.connection.disconnect();
@@ -32,6 +35,12 @@ function DiscordLinkServer::onConnectRequest(%server, %ip, %id) {
   DiscordLinkServer.connection.send("{ \"type\": \"Handshake\"}\n");
 }
 
+function DiscordLinkServer::transmit(%server, %data) {
+  if(isObject(DiscordLinkServer.connection)) {
+    // Append a newline so the bot can distunguish individual data.
+    DiscordLinkServer.connection.send(%data @ "\n");
+  }
+}
 
 function DiscordLinkSocket::onLine(%socket, %line) {
   if(%line $= "Init") {
