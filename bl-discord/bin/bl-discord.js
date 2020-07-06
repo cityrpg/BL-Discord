@@ -10,34 +10,21 @@ console.log("BL-Discord " + pkg.version);
 
 var socket;
 
-const server = net.createServer((conn) => {
-  var addressInfo = conn.address();
+const client = net.createConnection({ port: 25625 }, () => {
+  console.log("Connecting to Blockland");
 
-  // Local connections only
-  if(addressInfo.address !== "::ffff:127.0.0.1") {
-    conn.destroy();
-    return;
-  }
-  conn.pipe(conn);
-  console.log("Received connection from Blockland");
-
-  conn.write("Init");
-
-  if(typeof socket !== "undefined") {
-    socket.destroy();
-    console.log("Received new connection, closing the old one...");
-  }
-
-  conn.on("data", (buffer) => {
-    console.log(buffer);
-    console.log(buffer.toString());
-  });
+  client.write("Init\r\n");
 });
 
-server.on("error", (err) => {
-    throw err;
+client.on("data", (buffer) => {
+  console.log(buffer);
+  console.log(buffer.toString());
 });
 
-server.listen(25625, () => {
-  console.log("Server listening");
+client.on("end", () => {
+  console.log("Disconnected from Blockland");
+});
+
+client.on("error", () => {
+  console.log("Failed to connect to Blockland");
 });

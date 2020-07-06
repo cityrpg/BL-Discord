@@ -1,26 +1,42 @@
 function initDiscordLink() {
-  if(!isObject(DiscordLink)) {
-    %link = new TCPObject(DiscordLink);
+  if(isObject(DiscordLinkServer)) {
+    DiscordLinkServer.connection.disconnect();
+    DiscordLinkServer.connection.delete();
+
+    DiscordLinkServer.disconnect();
+    DiscordLinkServer.delete();
   }
 
-  DiscordLink.connect("127.0.0.1:25625");
+  echo("Creating Discord link listener...");
+  %link = new TCPObject(DiscordLinkServer);
+  DiscordLinkServer.listen(25625);
 }
 
 initDiscordLink();
 
-function DiscordLink::onConnected(%link) {
-  echo("Discord bridge connected.");
-  %link.send("{ type: \"Handshake\"}");
+function DiscordLinkServer::onConnectRequest(%server, %ip, %id) {
+  %socket = new TCPobject(DiscordLinkSocket, %id) {
+    parent = %server;
+  };
+
+  // Local connections only
+  if(!isLANAddress(%ip)) {
+    %socket.disconnect();
+    %socket.delete();
+    return;
+  }
+
+  DiscordLinkServer.connection = %socket;
+  DiscordLinkServer.connection.send("{ type: \"Handshake\"}\n");
 }
 
-function DiscordLink::onLine(%link) {
-  echo("line");
+
+function DiscordLinkSocket::onLine(%socket, %line) {
+  if(%line $= "Init") {
+    echo("Successfully connected to the Discord bridge");
+  }
 }
 
-function DiscordLink::onConnectFailed(%link) {
-  echo("Discord bridge connection failed.");
-}
-
-function DiscordLink::onDisconnect(%link) {
+function DiscordLinkSocket::onDisconnect(%socket) {
   echo("Discord bridge disconnected.");
 }
