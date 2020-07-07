@@ -9,7 +9,7 @@
   "author": "The CityRPG 4 Team",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^12.2.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0"
