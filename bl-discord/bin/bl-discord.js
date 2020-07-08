@@ -2,12 +2,33 @@
 
 // Requirements
 const net = require("net");
+const fs = require("fs");
+const Discord = require("discord.js");
 
 // Init
 process.title = `Blockland-Discord`;
 var pkg = require("../package.json");
 console.log("BL-Discord " + pkg.version);
 
+// Config loading
+var configFile = process.env.CONFIG_FILE || "../config.json";
+var config = require(configFile);
+
+// Discord client handling
+const discordClient = new Discord.Client();
+function parseDiscordInput(data) {
+  // TODO
+}
+
+discordClient.on("ready", () => {
+  console.log("Successfully connected to Discord");
+});
+
+discordClient.on("message", parseDiscordInput);
+
+discordClient.login(config.token);
+
+// Game client handling
 function parseGameInput(data) {
   switch(data.type) {
     case "Handshake":
@@ -19,13 +40,13 @@ function parseGameInput(data) {
   }
 }
 
-const client = net.createConnection({ port: 25625 }, () => {
+const gameClient = net.createConnection({ port: 25625 }, () => {
   console.log("Connecting to Blockland...");
 
-  client.write("Init\r\n");
+  gameClient.write("Init\r\n");
 });
 
-client.on("data", (buffer) => {
+gameClient.on("data", (buffer) => {
   if(!buffer.toString().endsWith("\n")) {
     warn("WARNING: Received potentially incomplete data from Blockland.");
   }
@@ -52,10 +73,10 @@ client.on("data", (buffer) => {
   }
 });
 
-client.on("end", () => {
+gameClient.on("end", () => {
   console.log("Disconnected from Blockland");
 });
 
-client.on("error", () => {
+gameClient.on("error", () => {
   console.log("Failed to connect to Blockland");
 });

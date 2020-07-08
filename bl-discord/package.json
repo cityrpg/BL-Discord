@@ -4,7 +4,7 @@
   "description": "Connects a Blockland server to Discord",
   "main": "index.js",
   "scripts": {
-    "test": "node ./bin/bl-discord.js"
+    "test": "env CONFIG_FILE=../config-test.json node ./bin/bl-discord.js"
   },
   "author": "The CityRPG 4 Team",
   "license": "MIT",
