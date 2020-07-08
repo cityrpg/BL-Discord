@@ -36,6 +36,11 @@ function parseGameInput(data) {
       break;
     case "Chat":
       console.log("[Game chat] " + data.senderName + ": " + data.text);
+      discordClient.channels.fetch(config.channelTemp)
+      .then((channel) => {
+        channel.send(data.senderName + ": " + data.text);
+      });
+
       break;
   }
 }
