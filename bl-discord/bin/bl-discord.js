@@ -8,7 +8,7 @@ const Discord = require("discord.js");
 // Init
 process.title = `Blockland-Discord`;
 var pkg = require("../package.json");
-console.log("BL-Discord " + pkg.version);
+console.log("\x1b[7m# BL-Discord " + pkg.version + " #\x1b[0m");
 
 // Config loading
 var configFile = process.env.CONFIG_FILE || "../config.json";
