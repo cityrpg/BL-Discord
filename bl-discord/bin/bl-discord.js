@@ -28,7 +28,7 @@ discordClient.on("message", parseDiscordInput);
 
 discordClient.login(config.token);
 
-// Game client handling
+// Server handling
 function parseGameInput(data) {
   switch(data.type) {
     case "Handshake":
@@ -40,19 +40,31 @@ function parseGameInput(data) {
       .then((channel) => {
         channel.send(data.senderName + ": " + data.text);
       });
-
       break;
   }
 }
 
-const gameClient = net.createConnection({ port: 25625 }, () => {
-  console.log("Connecting to Blockland...");
+const server = net.createServer((conn) => {
+  var addressInfo = conn.address();
 
-  gameClient.write("Init\r\n");
-});
+  // Local connections only
+  if(addressInfo.address !== "::ffff:127.0.0.1") {
+    conn.destroy();
+    return;
+  }
+  conn.pipe(conn);
+  console.log("Received connection from Blockland");
 
-gameClient.on("data", (buffer) => {
-  if(!buffer.toString().endsWith("\n")) {
+  // Write the handshake line
+  conn.write("BL\tINIT\n");
+
+  if(typeof socket !== "undefined") {
+    socket.destroy();
+    console.log("Received new connection, closing the old one...");
+  }
+
+  conn.on("data", (buffer) => {
+    if(!buffer.toString().endsWith("\n")) {
     warn("WARNING: Received potentially incomplete data from Blockland.");
   }
 
@@ -76,12 +88,13 @@ gameClient.on("data", (buffer) => {
 
     parseGameInput(data);
   }
+  });
 });
 
-gameClient.on("end", () => {
-  console.log("Disconnected from Blockland");
+server.on("error", (err) => {
+    throw err;
 });
 
-gameClient.on("error", () => {
-  console.log("Failed to connect to Blockland");
+server.listen(25625, () => {
+  console.log("Waiting for connection from Blockland server");
 });

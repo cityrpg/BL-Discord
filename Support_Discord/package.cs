@@ -6,7 +6,7 @@ package DiscordLink {
     %chatData.set("senderName", "string", %client.name);
     %chatData.set("text", "string", %text);
 
-    DiscordLinkServer.transmit(jettisonStringify("object", %chatData));
+    DiscordLink.transmit(jettisonStringify("object", %chatData));
 
     Parent::serverCmdMessageSent(%client, %text);
   }

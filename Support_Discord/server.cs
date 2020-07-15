@@ -2,52 +2,42 @@ exec("./jettison.cs");
 exec("./package.cs");
 
 function initDiscordLink() {
-  if(isObject(DiscordLinkServer) && isObject(DiscordLinkServer.connection)) {
-    DiscordLinkServer.connection.disconnect();
-    DiscordLinkServer.connection.delete();
+  if(!isObject(DiscordLink)) {
+    %link = new TCPObject(DiscordLink);
   }
 
-  if(isObject(DiscordLinkServer)) {
-    DiscordLinkServer.disconnect();
-    DiscordLinkServer.delete();
-  }
-
-  echo("Creating Discord link listener...");
-  %link = new TCPObject(DiscordLinkServer);
-  DiscordLinkServer.listen(25625);
+  DiscordLink.connect("127.0.0.1:25625");
 }
 
 initDiscordLink();
 
-function DiscordLinkServer::onConnectRequest(%server, %ip, %id) {
-  %socket = new TCPobject(DiscordLinkSocket, %id) {
-    parent = %server;
-  };
-
-  // Local connections only
-  if(!isLANAddress(%ip)) {
-    %socket.disconnect();
-    %socket.delete();
-    return;
-  }
-
-  DiscordLinkServer.connection = %socket;
-  DiscordLinkServer.connection.send("{ \"type\": \"Handshake\"}\n");
+function DiscordLink::onConnected(%link) {
+  echo("Discord bridge connected.");
+  %link.send("{ \"type\": \"Handshake\"}\n");
 }
 
-function DiscordLinkServer::transmit(%server, %data) {
-  if(isObject(DiscordLinkServer.connection)) {
-    // Append a newline so the bot can distunguish individual data.
-    DiscordLinkServer.connection.send(%data @ "\n");
+// Torque separates the lines for us, so no special handling needed here.
+// Output to the bot is a different story, though.
+function DiscordLink::onLine(%this, %line) {
+  %text = getLine(%line, 0);
+
+  if(getField(%text, 0) $= "BL") {
+    if(getField(%text, 1) $= "INIT") {
+      echo("Successfully connected to the Discord bridge");
+    }
   }
 }
 
-function DiscordLinkSocket::onLine(%socket, %line) {
-  if(%line $= "Init") {
-    echo("Successfully connected to the Discord bridge");
-  }
+function DiscordLink::transmit(%this, %data) {
+  // Append a newline so the bot can distunguish individual data.
+  %this.send(%data @ "\n");
 }
 
-function DiscordLinkSocket::onDisconnect(%socket) {
+
+function DiscordLink::onConnectFailed(%link) {
+  echo("Discord bridge connection failed.");
+}
+
+function DiscordLink::onDisconnect(%link) {
   echo("Discord bridge disconnected.");
 }
