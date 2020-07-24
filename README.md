@@ -3,7 +3,7 @@ BL-Discord is an application and add-on for Blockland that connects your Blockla
 
 Note that BL-Discord is a work-in-progress. Expect bugs and compatibility-breaking changes between updates. Currently only supports a single Blockland server on a single system.
 
-Check out development progress for BL-Discord on the [Trello Card]().
+Check out development progress for BL-Discord on the [Trello Card](https://trello.com/c/dNKDlc6T/175-discord-bridge).
 
 # Planned Features
 - Chat link - Seamless chat between the game and Discord
